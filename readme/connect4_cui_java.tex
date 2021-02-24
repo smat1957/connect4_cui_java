@@ -1,0 +1,689 @@
+% latex uft-8
+\documentclass[uplatex,a4paper,11pt,oneside,openany]{jsbook}
+%
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{ascmac}
+\usepackage{setspace}
+\usepackage{here}
+\usepackage{listings,jlisting} %日本語のコメントアウトをする場合jlistingが必要
+%ここからソースコードの表示に関する設定
+\usepackage{xcolor,comment}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\begin{comment}
+\lstset{
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}; should come as last argument
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  firstnumber=1000,                % start line enumeration with line 1000
+  frame=single,	                   % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=Octave,                 % the language of the code
+  morekeywords={*,...},            % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,	                   % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+\end{comment}
+
+%ここからソースコードの表示に関する設定
+
+\lstdefinestyle{customc}{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  numbers=left,
+  frame=single,
+  xleftmargin=\parindent,
+  language=C,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries\color{green!40!black},
+  commentstyle=\itshape\color{purple!40!black},
+  identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+}
+
+\lstdefinestyle{customjava}{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  numbers=left,
+  frame=single,
+  xleftmargin=\parindent,
+  language=java,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries\color{green!40!black},
+  commentstyle=\itshape\color{purple!40!black},
+  identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+}
+
+\lstdefinestyle{customasm}{
+  belowcaptionskip=1\baselineskip,
+  frame=L,
+  xleftmargin=\parindent,
+  language=[x86masm]Assembler,
+  basicstyle=\footnotesize\ttfamily,
+  commentstyle=\itshape\color{purple!40!black},
+}
+
+\lstset{escapechar=@,style=customjava}
+
+\makeatletter
+\def\ps@plainfoot{%
+  \let\@mkboth\@gobbletwo
+  \let\@oddhead\@empty
+  \def\@oddfoot{\normalfont\hfil-- \thepage\ --\hfil}%
+  \let\@evenhead\@empty
+  \let\@evenfoot\@oddfoot}
+  \let\ps@plain\ps@plainfoot
+\renewcommand{\chapter}{%
+  \if@openright\cleardoublepage\else\clearpage\fi
+  \global\@topnum\z@
+  \secdef\@chapter\@schapter}
+\makeatother
+%
+\newcommand{\maru}[1]{{\ooalign{%
+\hfil\hbox{$\bigcirc$}\hfil\crcr%
+\hfil\hbox{#1}\hfil}}}
+%
+\setlength{\textwidth}{\fullwidth}
+\setlength{\textheight}{40\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\voffset}{-0.55in}
+%
+\begin{document}
+% START DOCUMENT
+%
+% COVER
+\begin{center}
+  \huge \par
+  \vspace{15mm}
+  \huge \par
+  \vspace{15mm}
+  \LARGE 連珠 (CUI - java) \par
+  \vspace{100mm}
+  \Large \date \par
+  \vspace{15mm}
+  \Large \par
+  \vspace{10mm}
+  \Large S.Matoike \par
+  \vspace{10mm}
+\end{center}
+\thispagestyle{empty}
+\clearpage
+\addtocounter{page}{-1}
+\newpage
+\setcounter{tocdepth}{3}
+%
+\tableofcontents
+%
+
+\section{連珠（Connect Four）}
+
+\begin{spacing}{0.6}
+  \begin{verbatim}
+スタート！ [ 5目並べ ]
+
+     0 1 2 3 4 5 6 7 8 9
+ 0:  . . . . . . . . . .
+ 1:  . . . . . . . . . .
+ 2:  . . . . . . . . . .
+ 3:  . . . . . . . . . .
+ 4:  . . . . . . . . . .
+ 5:  . . . . . . . . . .
+ 6:  . . . . . . . . . .
+ 7:  . . . . . . . . . .
+ 8:  . . . . . . . . . .
+ 9:  . . . . . . . . . .
+
+石を置く場所 xy を指定（ あなた の番です ）：44
+
+     0 1 2 3 4 5 6 7 8 9
+ 0:  . . . . . . . . . .
+ 1:  . . . . . . . . . .
+ 2:  . . . . . . . . . .
+ 3:  . . . . . . . . . .
+ 4:  . . . . ● . . . . .
+ 5:  . . . . . . . . . .
+ 6:  . . . . . . . . . .
+ 7:  . . . . . . . . . .
+ 8:  . . . . . . . . . .
+ 9:  . . . . . . . . . .
+
+石を置く場所 xy を指定（ あなた の番です ）：43
+(*** 中略 ***)
+石を置く場所 xy を指定（ あなた の番です ）：53
+
+     0 1 2 3 4 5 6 7 8 9
+ 0:  . . . . . . . . . .
+ 1:  . . . . . . . . . .
+ 2:  . . . . . . . . . .
+ 3:  . . ● ● ● ● . . . .
+ 4:  . . . ○ ● . . . . .
+ 5:  . . . ○ ○ ○ . . . .
+ 6:  . . . . . ○ . . . .
+ 7:  . . . . . . ○ . . .
+ 8:  . . . . . . . ● . .
+ 9:  . . . . . . . . . .
+
+石を置く場所 xy を指定（ あなた の番です ）：36
+
+     0 1 2 3 4 5 6 7 8 9
+ 0:  . . . . . . . . . .
+ 1:  . . . . . . . . . .
+ 2:  . . . . . . . . . .
+ 3:  . . ● ● ● ● ● . . .
+ 4:  . . . ○ ● . . . . .
+ 5:  . . . ○ ○ ○ . . . .
+ 6:  . . . . . ○ . . . .
+ 7:  . . . . . . ○ . . .
+ 8:  . . . . . . . ● . .
+ 9:  . . . . . . . . . .
+
+'X' の勝ち	またね！
+\end{verbatim}
+\end{spacing}
+
+
+\subsection{定数定義クラスと主処理}
+
+\begin{lstlisting}[caption=定数定義クラス：N目並べ,label=prog22]
+package nmoku;
+
+public final class Constants {
+    private Constants() {}
+    final static int WIDTH = 7;
+    final static int NMOKU = 5;
+    final static int NxN = NMOKU * NMOKU;
+    final static int WHITE = 1;
+    final static int BLACK = -1;
+    final static int MARU = WHITE;
+    final static int BATSU = BLACK;
+    final static int MAX = WHITE;
+    final static int MIN = BLACK;
+    final static int EMPTY = 0;
+    final static int NEXT = 200;
+    final static int DRAW = 100;
+    final static int PROMPT = 1000;
+    final static int RANDOM = 1010;
+    final static int MINIMAX = 1001;
+    final static int ALPHABETA = 1002;
+    final static int MONTECARLO = 1003;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption=主処理：N目並べ,label=prog23]
+package nmoku;
+
+public class NMoku {
+    public static void main(String[] args) {
+        boolean reverse = false;
+        if (args.length > 0) {
+            if (args[0].equals("-r")) {
+                reverse = true;
+            }
+        }
+        Game g = new Game(reverse);
+        g.Start();
+    }
+}
+\end{lstlisting}
+
+\subsection{ゲームクラス}
+
+\begin{lstlisting}[caption=ゲームクラス：N目並べ,label=prog24]
+package nmoku;
+
+import static nmoku.Constants.*;
+
+public class Game {
+
+    private Player[] player = null;
+    private Board board = null;
+    private int current_player = 0;
+    private Player currPlayer = null;
+
+    public Game(boolean reverse) {
+        player = new Player[2];
+        if (reverse) {
+            player[0] = new Player(MARU, "PC", ALPHABETA);
+            player[1] = new Player(BATSU, "あなた", PROMPT);
+        } else {
+            player[0] = new Player(BATSU, "あなた", PROMPT);
+            player[1] = new Player(MARU, "PC", ALPHABETA);
+        }
+        currPlayer = player[0];
+        board = new Board();
+    }
+    void Start() {
+        int winner = NEXT;
+        System.out.println("スタート！ [ " + NMOKU + "目並べ ]");
+        do {
+            board.print();
+            currPlayer = player[current_player];
+            currPlayer.putStone(board);
+            winner = board.check();
+            current_player = ++current_player % 2;
+        } while (winner == NEXT);
+        board.print();
+        result(winner);
+    }
+    private void result(int winner) {
+        // 結果の表示
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption=結果の表示：ゲームクラス内：N目並べ,label=prog25]
+private void result(int winner) {
+    // 結果の表示
+    System.out.println();
+    switch (winner) {
+        case DRAW:
+            System.out.print("引き分け\t");
+            break;
+        case MARU:
+            System.out.print(currPlayer.getName() + "'O' の勝ち\t");
+            break;
+        case BATSU:
+            System.out.print(currPlayer.getName() + "'X' の勝ち\t");
+            break;
+    }
+    System.out.println("またね！");
+}
+\end{lstlisting}
+\
+\subsection{石クラス}
+
+\begin{lstlisting}[caption=石クラス：N目並べ,label=prog26]
+package nmoku;
+
+import static nmoku.Constants.*;
+
+public class Stone {
+
+    private int locate = 0;
+    private int color = EMPTY;
+
+    public Stone(int n, int i) {
+        locate = n;
+        color = i;
+    }
+    int getColor() {
+        return color;
+    }
+    void setColor(int i) {
+        color = i;
+    }
+    int getLocate() {
+        return locate;
+    }
+}
+\end{lstlisting}
+
+\subsection{盤面クラス}
+
+\begin{lstlisting}[caption=盤面クラス：N目並べ,label=prog27]
+package nmoku;
+
+import static nmoku.Constants.*;
+
+public class Board {
+
+    private static Stone[] board = new Stone[WIDTH * WIDTH];
+    private static Stone recentStone = null;
+
+    public Board() {
+        for (int i = 0; i < WIDTH * WIDTH; i++) {
+            board[i] = new Stone(i, EMPTY);
+        }
+    }
+    void setBoard(Stone s) {
+        recentStone = s;
+        board[s.getLocate()] = s;
+    }
+    void setEmpty(int xy){
+        board[xy]=new Stone(xy, EMPTY);
+    }
+    boolean canPut(Stone s) {
+        if (board[s.getLocate()].getColor() != EMPTY) {
+            return false;
+        }
+        return true;
+    }
+    int getz(int x, int y) {
+        return y * WIDTH + x;	// 0<= x <WIDTH, 0<= y <WIDTH
+    }
+    int check() {
+        return boardScan(recentStone.getLocate() % WIDTH,
+                         recentStone.getLocate() / WIDTH);
+    }
+    void print() {
+        // 盤面の表示印刷
+    }
+    private int boardScan(int x, int y) {
+        //盤面の調査（5個並んだかの調査）
+    }
+    private int boardScanSub(int x, int y, int move_x, int move_y) {
+        // 盤面調査の下請け
+    }
+    boolean isWin(){
+        if(check()!=NEXT)return true;
+        return false;
+    }
+    boolean isDraw(){
+        return false;
+    }
+    float evaluate(Player player, int turn){
+        if(isWin()){
+            if(turn==player.getColor())return (float)(-1.0);
+            else if(turn!=player.getColor())return (float)(1.0);
+        }
+        return (float)0.0;
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption=盤面の表示印刷：盤面クラス内：N目並べ,label=prog28]
+void print() {
+    // 盤面の表示印刷
+    final String[] str = {".", "●", "○"};
+
+    System.out.printf("\n    ");
+    for (int x = 0; x < WIDTH; x++) {
+        if (x < 10) {
+            System.out.printf("%2d", x);
+        } else {
+            System.out.printf("%2c", (char) ('a' - 10 + x));
+        }
+    }
+    System.out.printf("\n");
+    for (int y = 0; y < WIDTH; y++) {
+        if (y < 10) {
+            System.out.printf("%2d: ", y);
+        } else {
+            System.out.printf("%2c: ", (char) ('a' - 10 + y));
+        }
+        for (int x = 0; x < WIDTH; x++) {
+            int cl = board[getz(x, y)].getColor();
+            int num=0;
+            if(cl==WHITE)num=2;
+            if(cl==BLACK)num=1;
+            System.out.printf("%2s", str[num]);
+        }
+        System.out.printf("\n");
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption=盤面の調査：盤面クラス内：N目並べ,label=prog29]
+private int boardScan(int x, int y) {
+    //盤面の調査（5個並んだかの調査）
+    int[] n = new int[4];     //8方向（直線4本分）に並んだ数
+    //[＼]方向
+    n[0] = boardScanSub(x, y, 1, 1);
+    //[│]方向
+    n[1] = boardScanSub(x, y, 0, 1);
+    //[─]方向
+    n[2] = boardScanSub(x, y, 1, 0);
+    //[／]方向
+    n[3] = boardScanSub(x, y, -1, 1);
+    for (int i = 0; i < 4; i++) {
+        if (n[i] == NMOKU) {
+            return recentStone.getColor();
+        }
+    }
+    return NEXT;
+}
+private int boardScanSub(int x, int y, int move_x, int move_y) {
+    // 盤面調査の下請け
+    int n = 1;          //置いた場所の1個分で初期化
+    int i;
+    for (i = 1; i < NMOKU; i++) {
+        int z = getz(x + (move_x * i), y + (move_y * i));
+        if (!(0 <= z && z < WIDTH * WIDTH))continue;
+        if (board[z].getColor() == recentStone.getColor()) {
+            n += 1;
+        } else {
+            break;
+        }
+    }
+    for (i = 1; i < NMOKU; i++) {
+        int z = getz(x + (-1 * move_x * i), y + (-1 * move_y * i));
+        if (!(0 <= z && z < WIDTH * WIDTH))continue;
+        if (board[z].getColor() == recentStone.getColor()) {
+            n += 1;
+        } else {
+            break;
+        }
+    }
+    return n;
+}
+\end{lstlisting}
+
+\subsection{プレイヤークラス}
+
+\begin{lstlisting}[caption=プレイヤークラス：N目並べ,label=prog30]
+package nmoku;
+
+import static nmoku.Constants.*;
+
+public class Player extends Strategy {
+
+      private String Name = null;
+      private int Senryaku = 0;
+      private int Color = EMPTY;
+
+      public Player(int i, String n, int s) {
+          Color = i;
+          Name = n;
+          Senryaku = s;
+      }
+      void putStone(Board board) {
+          Stone s = null;
+          do {
+              int te = Te(board);
+              s = new Stone(te, Color);
+              if (board.canPut(s)) {
+                  break;
+              }
+          } while (true);
+          board.setBoard(s);
+      }
+      private int Te(Board board) {
+          int v = 0;
+          switch (Senryaku) {
+              case PROMPT:
+                  v = prompt(Name);
+                  break;
+              case RANDOM:
+                  v = random(Name);
+                  break;
+              case MINIMAX:
+                  v = bestMoveMM(board, this);
+                  break;
+              case ALPHABETA:
+                  v = bestMoveAB(board, this);
+                  break;
+              case MONTECARLO:
+                  break;
+          }
+          return v;
+      }
+      int getColor(){
+          return Color;
+      }
+      String getName(){
+          return Name;
+      }
+}
+\end{lstlisting}
+
+\subsection{戦略クラス（AlphaBeta）}
+
+盤面の大きさが大きければ大きいほど、またMINIMAXの探索深さが深くなるほど、コンピュータの手を見つけ出すのに時間がかかってしまい、
+人間との対戦の場面では現実的ではありません。そこでMINIMAXを改良した、AlphaBetaという戦略を使います。
+
+コンピュータが実用的な対戦相手となるためには、盤面サイズを小さくしたり、探索の深さを妥協したりというチューニングが必要になります。
+
+\begin{lstlisting}[caption=戦略クラス：N目並べ,label=prog31]
+package nmoku;
+
+import static nmoku.Constants.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class Strategy {
+
+    private boolean numP(char x) {
+        if (('0' <= x) && (x <= '9')) {
+            return true;
+        }
+        return false;
+    }
+    private int fromA(char x) {
+        return (int) (x - 'a');
+    }
+    int prompt(String name) {
+        // 標準入力から
+    }
+    int random(String name) {
+        System.out.printf("。。。　%s 思考中　。。。", name);
+        return (int) (Math.random() * (WIDTH * WIDTH));
+    }
+    private float minimax(Board board, int depth, int turn, Player player) {
+        // 三目並べ(TicTacToe)の時と同様に
+    }
+    int bestMoveMM(Board board, Player player) {
+        // 三目並べ(TicTacToe)の時と同様に
+    }
+    private float alphabeta(Board board, int depth, int turn, Player player, float alpha, float beta) {
+
+        if (board.isWin() || board.isDraw() || depth == 0) {
+            float score = board.evaluate(player, turn);
+            //System.out.println("evaluated score="+score+", depth="+depth);
+            return score;
+        }
+
+        for (int i = 0; i < WIDTH * WIDTH; i++) {
+            Stone s = new Stone(i, turn);
+            if (board.canPut(s)) {
+
+                //board.print();
+                //if(turn==MARU)System.out.println("Turn=O");
+                //else System.out.println("Turn=X");
+
+                board.setBoard(s);
+                float score = alphabeta(board, depth - 1, -turn, player, alpha, beta);
+                board.setEmpty(i);
+                //System.out.println("k1="+i+", score="+score);
+
+                if (turn == MAX) {
+                    alpha = Float.max(score, alpha);
+                    if( beta <= alpha )break;
+                } else {
+                    beta = Float.min(score, beta);
+                    if( beta <= alpha )break;
+                }
+            }
+        }
+        if(turn==MAX)return alpha;
+        return beta;
+    }
+    int bestMoveAB(Board board, Player player) {
+        float bestEval = (float) Integer.MIN_VALUE;
+        float alpha = (float) Integer.MIN_VALUE;
+        float beta = (float) Integer.MAX_VALUE;
+        int bestMove = -1;
+        for (int i = 0; i < WIDTH * WIDTH; i++) {
+            Stone s = new Stone(i, player.getColor());
+            if (board.canPut(s)) {
+                //board.print();
+                board.setBoard(s);  //BLACKに打たせるときは、-player.getColor()の負号をとり、
+                float eval = alphabeta(board, 6, -player.getColor(), player, alpha, beta);
+                board.setEmpty(i);  //Board.evaluate で -1 と 1 を入れ替える
+                //System.out.println("k="+i+", eval="+eval);
+                if (eval > bestEval) {
+                    bestEval = eval;
+                    bestMove = i;
+                }
+            }
+            //System.out.print(i+"\t");
+        }
+        return bestMove;
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption=標準入力：戦略クラス内：N目並べ,label=prog32]
+int prompt(String name) {
+    // 標準入力から
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    int num = -1;
+    String fmt = null, instr = null;
+    do {
+        fmt = String.format("\n石を置く場所 xy を指定（ %s の番です ）：", name);
+        System.out.print(fmt);
+        try {
+            instr = br.readLine();
+            char cx = instr.trim().charAt(0);
+            int nx;
+            if (numP(cx)) {
+                nx = Integer.parseInt(String.valueOf(cx));
+            } else {
+                nx = fromA(cx) + 10;
+            }
+            char cy = instr.trim().charAt(1);
+            int ny;
+            if (numP(cy)) {
+                ny = Integer.parseInt(String.valueOf(cy));
+            } else {
+                ny = fromA(cy) + 10;
+            }
+            num = nx * WIDTH + ny;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (!(0 <= num && num < WIDTH * WIDTH)) {
+            System.out.println("やり直し！ 場所を xy で指定して ）");
+            continue;
+        }
+        break;
+    } while (true);
+    return num;
+}
+\end{lstlisting}
+
+
+%\section*{謝辞}
+%\addcontentsline{toc}{chapter}{謝辞}
+%
+\begin{thebibliography}{99}
+  \bibitem{1}
+\end{thebibliography}
+%
+% END DOCUMENT
+\end{document}
+%
